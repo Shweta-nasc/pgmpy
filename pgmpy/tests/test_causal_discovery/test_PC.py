@@ -463,13 +463,11 @@ def test_pc_search_space_and_required_edges():
         pair = frozenset((X, Y))
         if pair == frozenset(("A", "C")) and set(Z) == {"B"}:
             return True
-        if pair == frozenset(("A", "D")) and set(Z) == set():
-            return True
         return False
 
     data = pd.DataFrame(np.random.randint(0, 2, size=(100, 4)), columns=["A", "B", "C", "D"])
 
-    search_space = [("A", "B"), ("B", "C"), ("B", "D")]
+    search_space = [("A", "B"), ("B", "C"), ("B", "D"), ("A", "C")]
     background = ExpertKnowledge(
         search_space=search_space,
         required_edges=[("B", "D")],
@@ -484,6 +482,7 @@ def test_pc_search_space_and_required_edges():
 
     edges = set(est.skeleton_.edges())
 
+    assert ("A", "C") not in edges and ("C", "A") not in edges
     assert ("A", "D") not in edges and ("D", "A") not in edges
     assert ("A", "B") in edges or ("B", "A") in edges
     assert ("B", "C") in edges or ("C", "B") in edges
